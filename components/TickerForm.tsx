@@ -16,6 +16,8 @@ import {
 import { Input } from '@/components/ui/input';
 import { ArrowRight } from 'lucide-react';
 import useRefinement, { RefinementCallback } from '@/hooks/use-refinement';
+import { usePathname, useSearchParams, useRouter } from 'next/navigation';
+import { useCallback } from 'react';
 
 const tickerValidationSchema = z.object({
   ticker: z
@@ -35,6 +37,22 @@ function checkTickerValidity(): RefinementCallback<Ticker> {
 }
 
 export function TickerForm() {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  const defaultTicker = searchParams.get('ticker') || '';
+
+  const createQueryString = useCallback(
+    (name: string, value: string) => {
+      const params = new URLSearchParams(searchParams.toString());
+      params.set(name, value);
+
+      return params.toString();
+    },
+    [searchParams]
+  );
+
   const isTickerValid = useRefinement(checkTickerValidity(), {
     debounce: 300,
   });
@@ -46,13 +64,14 @@ export function TickerForm() {
       })
     ),
     defaultValues: {
-      ticker: '',
+      ticker: defaultTicker,
     },
     mode: 'all',
   });
 
   function onSubmit(data: { ticker: string }) {
-    console.log(data);
+    router.push(pathname + '?' + createQueryString('ticker', data.ticker));
+    router.refresh();
   }
 
   return (
