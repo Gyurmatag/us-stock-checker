@@ -28,12 +28,7 @@ type Ticker = z.infer<typeof tickerValidationSchema>;
 
 function checkTickerValidity(): RefinementCallback<Ticker> {
   return async (data, { signal }) => {
-    const apiKey = process.env.NEXT_PUBLIC_POLYGON_API_KEY;
-    console.log(apiKey);
-    const response = await fetch(
-      `https://api.polygon.io/v3/reference/tickers?ticker=${data.ticker}&active=true&apiKey=${apiKey}`,
-      { signal }
-    );
+    const response = await fetch(`/api/tickers/${data.ticker}`);
     const responseData = await response.json();
     return responseData.results && responseData.results.length > 0;
   };
