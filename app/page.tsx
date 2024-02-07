@@ -1,12 +1,24 @@
+import { format, subYears } from 'date-fns';
 import { TickerForm } from '@/components/TickerForm';
-import { CompanyPeers, CompanyProfile, StockPriceData } from '@/types/types';
+import {
+  CompanyPeers,
+  CompanyProfile,
+  HistoricPriceData,
+  StockPriceData,
+} from '@/types/types';
 import Link from 'next/link';
+import HistoricChart from '@/components/HistoricChart';
 
 export default async function Home({
   searchParams,
 }: {
   searchParams?: { [ticker: string]: string };
 }) {
+  const today = new Date();
+  const lastYear = subYears(today, 1);
+  const formattedToday = format(today, 'yyyy-MM-dd');
+  const formattedLastYear = format(lastYear, 'yyyy-MM-dd');
+
   const companyProfileDataResponse = await fetch(
     `https://finnhub.io/api/v1/stock/profile2?symbol=${searchParams?.ticker}&token=${process.env.FINNHUB_API_KEY}`
   );
@@ -16,6 +28,9 @@ export default async function Home({
   const companyPeersDataResponse = await fetch(
     `https://finnhub.io/api/v1/stock/peers?symbol=${searchParams?.ticker}&token=${process.env.FINNHUB_API_KEY}`
   );
+  const historicPriceDataResponse = await fetch(
+    `https://api.polygon.io/v2/aggs/ticker/${searchParams?.ticker}/range/1/day/${formattedLastYear}/${formattedToday}?adjusted=true&sort=asc&apiKey=${process.env.POLYGON_API_KEY}`
+  );
 
   const companyProfileData =
     (await companyProfileDataResponse.json()) as CompanyProfile;
@@ -23,6 +38,8 @@ export default async function Home({
     (await stockPriceDataResponse.json()) as StockPriceData;
   const companyPeersData =
     (await companyPeersDataResponse.json()) as CompanyPeers;
+  const historicPriceData =
+    (await historicPriceDataResponse.json()) as HistoricPriceData;
 
   const displayedPeers = companyPeersData.slice(1, 4);
 
@@ -80,6 +97,7 @@ export default async function Home({
                 ))}
               </div>
             </div>
+            <HistoricChart rawData={historicPriceData.results} />
           </div>
         )}
       </div>
