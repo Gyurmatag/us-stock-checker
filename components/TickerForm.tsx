@@ -70,7 +70,6 @@ export function TickerForm() {
       })
       .superRefine(async (ticker, ctx) => {
         const isTickerInvalid = await validateTicker(ticker);
-        console.log(isTickerInvalid);
         if (isTickerInvalid) {
           return ctx.addIssue({
             code: z.ZodIssueCode.custom,
@@ -107,7 +106,14 @@ export function TickerForm() {
               <FormItem>
                 <FormLabel>Enter Ticker Symbol</FormLabel>
                 <FormControl>
-                  <Input placeholder='TICKER' {...field} />
+                  <Input
+                    placeholder='TICKER'
+                    {...field}
+                    onInput={(e) => {
+                      const target = e.target as HTMLInputElement;
+                      target.value = target.value.toUpperCase();
+                    }}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
