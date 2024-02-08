@@ -17,43 +17,16 @@ import { Input } from '@/components/ui/input';
 import { ArrowRight } from 'lucide-react';
 import { usePathname, useSearchParams, useRouter } from 'next/navigation';
 import { useCallback } from 'react';
+import { debounce } from 'lodash';
 
 const validateTicker = async (ticker: string) => {
   const response = await fetch(`/api/tickers/${ticker}`);
   const responseData = await response.json();
-  if (!responseData.results || responseData.results.length === 0) {
-    throw new Error('Ticker symbol is invalid or not found');
-  }
+  return !responseData.results || responseData.results.length === 0;
 };
 
 const MIN_TICKER_LENGTH = 1;
 const MAX_TICKER_LENGTH = 5;
-
-const tickerValidationSchema = z.object({
-  ticker: z
-    .string()
-    .min(MIN_TICKER_LENGTH, { message: 'Ticker must be at least 1 character.' })
-    .max(MAX_TICKER_LENGTH, {
-      message: 'Ticker must be no more than 5 characters.',
-    })
-    .superRefine(async (ticker, ctx) => {
-      try {
-        if (
-          ticker.length >= MIN_TICKER_LENGTH &&
-          ticker.length <= MAX_TICKER_LENGTH
-        ) {
-          await validateTicker(ticker);
-        }
-      } catch (e) {
-        const message =
-          e instanceof Error ? e.message : 'An unknown error occurred';
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: message,
-        });
-      }
-    }),
-});
 
 export function TickerForm() {
   const router = useRouter();
@@ -71,8 +44,44 @@ export function TickerForm() {
     },
     [searchParams]
   );
+
+  const tickerValidationSchema = z.object({
+    ticker: z
+      .string()
+      .superRefine((ticker, ctx) => {
+        if (ticker.length < MIN_TICKER_LENGTH) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: 'Ticker must at least 1 character.',
+            fatal: true,
+          });
+          return z.NEVER;
+        }
+      })
+      .superRefine((ticker, ctx) => {
+        if (ticker.length > MAX_TICKER_LENGTH) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: 'Ticker must at most 5 characters.',
+            fatal: true,
+          });
+          return z.NEVER;
+        }
+      })
+      .superRefine(async (ticker, ctx) => {
+        const isTickerInvalid = await validateTicker(ticker);
+        console.log(isTickerInvalid);
+        if (isTickerInvalid) {
+          return ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: 'Ticker should be a valid ticker symbol.',
+          });
+        }
+      }),
+  });
+
   const form = useForm<{ ticker: string }>({
-    resolver: zodResolver(tickerValidationSchema),
+    resolver: zodResolver(tickerValidationSchema, { async: true }),
     defaultValues: {
       ticker: defaultTicker,
     },
@@ -98,13 +107,7 @@ export function TickerForm() {
               <FormItem>
                 <FormLabel>Enter Ticker Symbol</FormLabel>
                 <FormControl>
-                  <Input
-                    placeholder='TICKER'
-                    {...field}
-                    onChange={(e) => {
-                      field.onChange(e);
-                    }}
-                  />
+                  <Input placeholder='TICKER' {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
