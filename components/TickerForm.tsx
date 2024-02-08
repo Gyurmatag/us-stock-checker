@@ -15,26 +15,45 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { ArrowRight } from 'lucide-react';
-import useRefinement, { RefinementCallback } from '@/hooks/use-refinement';
 import { usePathname, useSearchParams, useRouter } from 'next/navigation';
 import { useCallback } from 'react';
+
+const validateTicker = async (ticker: string) => {
+  const response = await fetch(`/api/tickers/${ticker}`);
+  const responseData = await response.json();
+  if (!responseData.results || responseData.results.length === 0) {
+    throw new Error('Ticker symbol is invalid or not found');
+  }
+};
+
+const MIN_TICKER_LENGTH = 1;
+const MAX_TICKER_LENGTH = 5;
 
 const tickerValidationSchema = z.object({
   ticker: z
     .string()
-    .min(1, { message: 'Ticker must be at least 1 character.' })
-    .max(5, { message: 'Ticker must be no more than 5 characters.' }),
+    .min(MIN_TICKER_LENGTH, { message: 'Ticker must be at least 1 character.' })
+    .max(MAX_TICKER_LENGTH, {
+      message: 'Ticker must be no more than 5 characters.',
+    })
+    .superRefine(async (ticker, ctx) => {
+      try {
+        if (
+          ticker.length >= MIN_TICKER_LENGTH &&
+          ticker.length <= MAX_TICKER_LENGTH
+        ) {
+          await validateTicker(ticker);
+        }
+      } catch (e) {
+        const message =
+          e instanceof Error ? e.message : 'An unknown error occurred';
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: message,
+        });
+      }
+    }),
 });
-
-type Ticker = z.infer<typeof tickerValidationSchema>;
-
-function checkTickerValidity(): RefinementCallback<Ticker> {
-  return async (data, { signal }) => {
-    const response = await fetch(`/api/tickers/${data.ticker}`);
-    const responseData = await response.json();
-    return responseData.results && responseData.results.length > 0;
-  };
-}
 
 export function TickerForm() {
   const router = useRouter();
@@ -52,21 +71,12 @@ export function TickerForm() {
     },
     [searchParams]
   );
-
-  const isTickerValid = useRefinement(checkTickerValidity(), {
-    debounce: 300,
-  });
   const form = useForm<{ ticker: string }>({
-    resolver: zodResolver(
-      tickerValidationSchema.refine(isTickerValid, {
-        message: 'Ticker not found.',
-        path: ['ticker'],
-      })
-    ),
+    resolver: zodResolver(tickerValidationSchema),
     defaultValues: {
       ticker: defaultTicker,
     },
-    mode: 'all',
+    mode: 'onChange',
   });
 
   function onSubmit(data: { ticker: string }) {
@@ -93,7 +103,6 @@ export function TickerForm() {
                     {...field}
                     onChange={(e) => {
                       field.onChange(e);
-                      isTickerValid.invalidate();
                     }}
                   />
                 </FormControl>
