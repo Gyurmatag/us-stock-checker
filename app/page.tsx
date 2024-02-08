@@ -44,7 +44,7 @@ export default async function Home({
   const displayedPeers = companyPeersData.slice(1, 4);
 
   return (
-    <main className='flex min-h-screen flex-col items-center justify-between bg-gray-100 p-24'>
+    <main className='flex min-h-screen flex-col items-center justify-between bg-gray-100 p-5 lg:p-24'>
       <div className='z-10 flex w-full max-w-7xl flex-col space-y-4 text-sm'>
         <TickerForm />
         {searchParams?.ticker && (

@@ -78,9 +78,9 @@ export function TickerForm() {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className='flex w-2/3 items-end space-x-5'
+        className='flex items-center space-x-5'
       >
-        <div>
+        <div className='h-24 w-80'>
           <FormField
             control={form.control}
             name='ticker'

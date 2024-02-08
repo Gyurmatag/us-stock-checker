@@ -17,7 +17,7 @@ const StockDetails: React.FC<StockDetailsProps> = ({
 }) => {
   return (
     <div>
-      <div className='mb-4 flex space-x-12'>
+      <div className='mb-4 flex flex-col space-x-0 space-y-4 md:space-x-12 md:space-y-0 lg:flex-row'>
         <div className='space-y-1'>
           <p className='text-lg'>{ticker.toUpperCase()}</p>
           <h2 className='text-2xl font-bold'>{companyProfileData.name}</h2>
@@ -31,7 +31,7 @@ const StockDetails: React.FC<StockDetailsProps> = ({
           </div>
         </div>
         <div className='flex flex-col justify-end'>
-          <p className='flex space-x-6 text-sm text-gray-600'>
+          <p className='flex justify-between space-x-6 text-sm text-gray-600'>
             <span className='font-semibold'>Previous Close:</span>
             <span>{stockPriceData.pc}</span>
           </p>
