@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { ArrowRight } from 'lucide-react';
 import { usePathname, useSearchParams, useRouter } from 'next/navigation';
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import AwesomeDebouncePromise from 'awesome-debounce-promise';
 
 import { Button } from '@/components/ui/button';
@@ -92,6 +92,10 @@ export function TickerForm() {
     router.push(pathname + '?' + createQueryString('ticker', data.ticker));
     router.refresh();
   }
+
+  useEffect(() => {
+    form.reset({ ticker: defaultTicker });
+  }, [defaultTicker, form]);
 
   return (
     <Form {...form}>
