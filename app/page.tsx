@@ -1,4 +1,5 @@
 import { format, subYears } from 'date-fns';
+
 import { TickerForm } from '@/components/TickerForm';
 import {
   CompanyPeers,

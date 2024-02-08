@@ -18,10 +18,12 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { TickerResponse } from '@/types/types';
 
 const validateTicker = AwesomeDebouncePromise(async (ticker: string) => {
   const response = await fetch(`/api/tickers/${ticker}`);
-  const responseData = await response.json();
+  const responseData = (await response.json()) as TickerResponse;
+  console.log(responseData);
   return !responseData.results || responseData.results.length === 0;
 }, 300);
 
@@ -52,7 +54,7 @@ export function TickerForm() {
         if (ticker.length < MIN_TICKER_LENGTH) {
           ctx.addIssue({
             code: z.ZodIssueCode.custom,
-            message: 'Ticker must at least 1 character.',
+            message: `Ticker must at least ${MIN_TICKER_LENGTH} character.`,
             fatal: true,
           });
           return z.NEVER;
@@ -62,7 +64,7 @@ export function TickerForm() {
         if (ticker.length > MAX_TICKER_LENGTH) {
           ctx.addIssue({
             code: z.ZodIssueCode.custom,
-            message: 'Ticker must at most 5 characters.',
+            message: `Ticker must at most ${MAX_TICKER_LENGTH} characters.`,
             fatal: true,
           });
           return z.NEVER;

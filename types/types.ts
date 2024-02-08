@@ -1,3 +1,27 @@
+type BaseResponse<T> = {
+  count: number;
+  request_id: string;
+  results: T[];
+  status: string;
+};
+
+type TickerData = {
+  active: boolean;
+  cik: string;
+  composite_figi: string;
+  currency_name: string;
+  last_updated_utc: string;
+  locale: string;
+  market: string;
+  name: string;
+  primary_exchange: string;
+  share_class_figi: string;
+  ticker: string;
+  type: string;
+};
+
+export type TickerResponse = BaseResponse<TickerData>;
+
 export type CompanyProfile = {
   country: string;
   currency: string;

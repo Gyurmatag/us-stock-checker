@@ -2,13 +2,14 @@
 
 import React from 'react';
 import { Card, LineChart, Title } from '@tremor/react';
-import { HistoricPriceResult } from '@/types/types';
 import { format } from 'date-fns';
 import { TooltipProps } from 'recharts';
 import {
   ValueType,
   NameType,
 } from 'recharts/types/component/DefaultTooltipContent';
+
+import { HistoricPriceResult } from '@/types/types';
 
 type HistoricChartProps = {
   rawData: HistoricPriceResult[];
