@@ -23,7 +23,6 @@ import { TickerResponse } from '@/types/types';
 const validateTicker = AwesomeDebouncePromise(async (ticker: string) => {
   const response = await fetch(`/api/tickers/${ticker}`);
   const responseData = (await response.json()) as TickerResponse;
-  console.log(responseData);
   return !responseData.results || responseData.results.length === 0;
 }, 300);
 

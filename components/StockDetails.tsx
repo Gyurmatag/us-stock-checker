@@ -1,26 +1,37 @@
 import React from 'react';
 import Link from 'next/link';
 
-import { CompanyProfile, StockPriceData } from '@/types/types';
+import { CompanyPeers, CompanyProfile, StockPriceData } from '@/types/types';
 
 type StockDetailsProps = {
   ticker: string;
-  companyProfileData: CompanyProfile;
-  stockPriceData: StockPriceData;
-  displayedPeers: string[];
 };
 
-const StockDetails: React.FC<StockDetailsProps> = ({
-  ticker,
-  companyProfileData,
-  stockPriceData,
-  displayedPeers,
-}) => {
+const StockDetails: React.FC<StockDetailsProps> = async ({ ticker }) => {
+  const companyProfileDataResponse = await fetch(
+    `https://finnhub.io/api/v1/stock/profile2?symbol=${ticker}&token=${process.env.FINNHUB_API_KEY}`
+  );
+  const stockPriceDataResponse = await fetch(
+    `https://finnhub.io/api/v1/quote?symbol=${ticker}&token=${process.env.FINNHUB_API_KEY}`
+  );
+  const companyPeersDataResponse = await fetch(
+    `https://finnhub.io/api/v1/stock/peers?symbol=${ticker}&token=${process.env.FINNHUB_API_KEY}`
+  );
+
+  const companyProfileData =
+    (await companyProfileDataResponse.json()) as CompanyProfile;
+  const stockPriceData =
+    (await stockPriceDataResponse.json()) as StockPriceData;
+  const companyPeersData =
+    (await companyPeersDataResponse.json()) as CompanyPeers;
+
+  const displayedPeers = companyPeersData.slice(1, 4);
+
   return (
     <div>
       <div className='mb-4 flex flex-col space-x-0 space-y-4 md:space-x-12 md:space-y-0 lg:flex-row'>
         <div className='space-y-1'>
-          <p className='text-lg'>{ticker.toUpperCase()}</p>
+          <p className='text-lg'>{ticker?.toUpperCase()}</p>
           <h2 className='text-2xl font-bold'>{companyProfileData.name}</h2>
           <div className='flex items-center space-x-2'>
             <p className='text-3xl text-gray-900'>{stockPriceData.c}</p>

@@ -1,22 +1,32 @@
-'use client';
-
 import React from 'react';
 import { Card, LineChart, Title } from '@tremor/react';
-import { format } from 'date-fns';
+import { format, subYears } from 'date-fns';
 import { TooltipProps } from 'recharts';
 import {
   ValueType,
   NameType,
 } from 'recharts/types/component/DefaultTooltipContent';
 
-import { HistoricPriceResult } from '@/types/types';
+import { HistoricPriceData } from '@/types/types';
 
 type HistoricChartProps = {
-  rawData: HistoricPriceResult[];
+  ticker: string;
 };
 
-export default function HistoricChart({ rawData }: HistoricChartProps) {
-  const chartData = rawData.map((data) => {
+const HistoricChart: React.FC<HistoricChartProps> = async ({ ticker }) => {
+  const today = new Date();
+  const lastYear = subYears(today, 1);
+  const formattedToday = format(today, 'yyyy-MM-dd');
+  const formattedLastYear = format(lastYear, 'yyyy-MM-dd');
+
+  const historicPriceDataResponse = await fetch(
+    `https://api.polygon.io/v2/aggs/ticker/${ticker}/range/1/day/${formattedLastYear}/${formattedToday}?adjusted=true&sort=asc&apiKey=${process.env.POLYGON_API_KEY}`
+  );
+
+  const historicPriceData =
+    (await historicPriceDataResponse.json()) as HistoricPriceData;
+
+  const chartData = historicPriceData.results.map((data) => {
     const date = new Date(data.t);
     return {
       fullDate: format(date, 'yyyy-MM-dd'),
@@ -53,8 +63,9 @@ export default function HistoricChart({ rawData }: HistoricChartProps) {
         categories={['Stock Price']}
         colors={['emerald']}
         yAxisWidth={40}
-        customTooltip={customTooltip}
       />
     </Card>
   );
-}
+};
+
+export default HistoricChart;
