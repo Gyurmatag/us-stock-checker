@@ -3,6 +3,10 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
+import { ArrowRight } from 'lucide-react';
+import { usePathname, useSearchParams, useRouter } from 'next/navigation';
+import { useCallback } from 'react';
+import AwesomeDebouncePromise from 'awesome-debounce-promise';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -14,16 +18,12 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { ArrowRight } from 'lucide-react';
-import { usePathname, useSearchParams, useRouter } from 'next/navigation';
-import { useCallback } from 'react';
-import { debounce } from 'lodash';
 
-const validateTicker = async (ticker: string) => {
+const validateTicker = AwesomeDebouncePromise(async (ticker: string) => {
   const response = await fetch(`/api/tickers/${ticker}`);
   const responseData = await response.json();
   return !responseData.results || responseData.results.length === 0;
-};
+}, 300);
 
 const MIN_TICKER_LENGTH = 1;
 const MAX_TICKER_LENGTH = 5;
