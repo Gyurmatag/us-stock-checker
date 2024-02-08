@@ -4,23 +4,23 @@ import React from 'react';
 import { Card, LineChart, Title } from '@tremor/react';
 import { HistoricPriceResult } from '@/types/types';
 import { format } from 'date-fns';
+import { TooltipProps } from 'recharts';
 import {
   ValueType,
   NameType,
 } from 'recharts/types/component/DefaultTooltipContent';
-import { TooltipProps } from 'recharts';
 
 type HistoricChartProps = {
   rawData: HistoricPriceResult[];
 };
 
 export default function HistoricChart({ rawData }: HistoricChartProps) {
-  const chartdata = rawData.map((data) => {
+  const chartData = rawData.map((data) => {
     const date = new Date(data.t);
     return {
-      fullDate: format(date, 'yyyy-MM-dd'), // full date
-      month: format(date, 'MMMM'), // month name
-      'Stock Price': data.c, // stock price
+      fullDate: format(date, 'yyyy-MM-dd'),
+      month: format(date, 'yyyy. MMM.'),
+      'Stock Price': data.c,
     };
   });
 
@@ -47,7 +47,7 @@ export default function HistoricChart({ rawData }: HistoricChartProps) {
       <Title>Stock Price Over Time (1y)</Title>
       <LineChart
         className='mt-6'
-        data={chartdata}
+        data={chartData}
         index='month'
         categories={['Stock Price']}
         colors={['emerald']}
