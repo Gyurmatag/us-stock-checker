@@ -26,7 +26,11 @@ const StockDetails: React.FC<StockDetailsProps> = async ({ ticker }) => {
   const companyPeersData =
     (await companyPeersDataResponse.json()) as CompanyPeers;
 
-  const displayedPeers = companyPeersData.slice(1, 4);
+  const displayedPeers = companyPeersData
+    .filter((peerTicker) => peerTicker !== ticker)
+    .slice(0, 3);
+
+  console.log(companyPeersData);
 
   return (
     <div className='dark:bg-dark-tremor-background dark:text-gray-300'>
