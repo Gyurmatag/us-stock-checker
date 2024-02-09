@@ -2,6 +2,7 @@ import React from 'react';
 import Link from 'next/link';
 
 import { CompanyPeers, CompanyProfile, StockPriceData } from '@/types/types';
+import { FINNHUB_API } from '@/constants/apiConstants';
 
 type StockDetailsProps = {
   ticker: string;
@@ -9,13 +10,13 @@ type StockDetailsProps = {
 
 const StockDetails: React.FC<StockDetailsProps> = async ({ ticker }) => {
   const companyProfileDataResponse = await fetch(
-    `https://finnhub.io/api/v1/stock/profile2?symbol=${ticker}&token=${process.env.FINNHUB_API_KEY}`
+    `${FINNHUB_API}/api/v1/stock/profile2?symbol=${ticker}&token=${process.env.FINNHUB_API_KEY}`
   );
   const stockPriceDataResponse = await fetch(
-    `https://finnhub.io/api/v1/quote?symbol=${ticker}&token=${process.env.FINNHUB_API_KEY}`
+    `${FINNHUB_API}/api/v1/quote?symbol=${ticker}&token=${process.env.FINNHUB_API_KEY}`
   );
   const companyPeersDataResponse = await fetch(
-    `https://finnhub.io/api/v1/stock/peers?symbol=${ticker}&token=${process.env.FINNHUB_API_KEY}`
+    `${FINNHUB_API}/api/v1/stock/peers?symbol=${ticker}&token=${process.env.FINNHUB_API_KEY}`
   );
 
   const companyProfileData =
@@ -66,7 +67,7 @@ const StockDetails: React.FC<StockDetailsProps> = async ({ ticker }) => {
       <div className='flex flex-col space-y-1.5'>
         <h3 className='text-lg dark:text-gray-100'>Similar Companies</h3>
         <div className='flex space-x-3'>
-          {displayedPeers.map((peerTicker: string) => (
+          {displayedPeers?.map((peerTicker: string) => (
             <Link
               key={peerTicker}
               replace

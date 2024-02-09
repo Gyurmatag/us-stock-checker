@@ -10,17 +10,18 @@ import {
 } from 'recharts/types/component/DefaultTooltipContent';
 
 import { HistoricPriceData } from '@/types/types';
+import { FULL_DATE_FORMAT, YEAR_MONTH_FORMAT } from '@/constants/dateConstants';
 
 type HistoricChartProps = {
   historicPriceData: HistoricPriceData;
 };
 
 const LineChartCore: React.FC<HistoricChartProps> = ({ historicPriceData }) => {
-  const chartData = historicPriceData.results.map((data) => {
+  const chartData = historicPriceData.results?.map((data) => {
     const date = new Date(data.t);
     return {
-      fullDate: format(date, 'yyyy-MM-dd'),
-      month: format(date, 'yyyy. MMM.'),
+      fullDate: format(date, FULL_DATE_FORMAT),
+      month: format(date, YEAR_MONTH_FORMAT),
       'Stock Price': data.c,
     };
   });

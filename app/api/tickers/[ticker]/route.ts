@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { POLYGON_API } from '@/constants/apiConstants';
 
 interface Params {
   ticker: string;
@@ -9,7 +10,7 @@ export async function GET(req: NextRequest, { params }: { params: Params }) {
     const apiKey = process.env.POLYGON_API_KEY;
     const ticker = params.ticker;
     const response = await fetch(
-      `https://api.polygon.io/v3/reference/tickers?ticker=${ticker}&active=true&apiKey=${apiKey}`
+      `${POLYGON_API}/v3/reference/tickers?ticker=${ticker}&active=true&apiKey=${apiKey}`
     );
     const responseJson = await response.json();
     return NextResponse.json(responseJson, { status: 200 });
