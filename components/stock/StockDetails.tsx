@@ -30,8 +30,6 @@ const StockDetails: React.FC<StockDetailsProps> = async ({ ticker }) => {
     .filter((peerTicker) => peerTicker !== ticker)
     .slice(0, 3);
 
-  console.log(companyPeersData);
-
   return (
     <div className='dark:bg-dark-tremor-background dark:text-gray-300'>
       <div className='mb-4 flex flex-col space-x-0 space-y-4 md:space-x-12 md:space-y-0 lg:flex-row'>
