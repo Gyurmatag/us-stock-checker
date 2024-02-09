@@ -13,6 +13,7 @@ export default function Error({
   }, [error]);
 
   const handleGoBack = () => {
+    // WORKAROUND - there is a problem with the internal Next.js router
     window.location.href = '/';
   };
 
