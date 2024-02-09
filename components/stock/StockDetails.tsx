@@ -70,7 +70,6 @@ const StockDetails: React.FC<StockDetailsProps> = async ({ ticker }) => {
           {displayedPeers?.map((peerTicker: string) => (
             <Link
               key={peerTicker}
-              replace
               href={`/?ticker=${peerTicker}`}
               className='text-lg text-blue-500 hover:underline dark:text-blue-400 dark:hover:text-blue-300'
             >

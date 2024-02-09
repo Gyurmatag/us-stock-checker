@@ -4,12 +4,6 @@ import Link from 'next/link';
 export default function NotFound() {
   return (
     <div className='flex min-h-[100vh] flex-col'>
-      <header className='flex h-14 items-center justify-center px-4'>
-        <Link className='flex items-center gap-2' href='/'>
-          <ArrowRightIcon className='h-4 w-4' />
-          <span className='font-semibold'>Return to App</span>
-        </Link>
-      </header>
       <main className='flex flex-1 flex-col items-center justify-center gap-4'>
         <div className='flex flex-col items-center gap-2 text-center'>
           <BarChartIcon className='h-12 w-12' />
