@@ -6,8 +6,12 @@ import { useSearchParams } from 'next/navigation';
 
 export function VisitedStocks() {
   const searchParams = useSearchParams();
-  const [ticker, setTicker] = useState(searchParams.get('ticker'));
-  const [tickers, setTickers] = useState<Set<string>>(new Set());
+  const initialTicker = searchParams.get('ticker');
+
+  const [ticker, setTicker] = useState(initialTicker);
+  const [tickers, setTickers] = useState<Set<string>>(
+    new Set(initialTicker ? [initialTicker] : [])
+  );
 
   useEffect(() => {
     const newTicker = searchParams.get('ticker');
@@ -17,7 +21,7 @@ export function VisitedStocks() {
         setTickers((prevTickers) => new Set([...prevTickers, newTicker]));
       }
     }
-  }, [searchParams]);
+  }, [searchParams, ticker]);
 
   return (
     <div className='space-x-3'>
