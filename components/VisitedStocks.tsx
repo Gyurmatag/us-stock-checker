@@ -18,7 +18,7 @@ export function VisitedStocks() {
     if (newTicker !== ticker) {
       setTicker(newTicker);
       if (newTicker !== null) {
-        setTickers((prevTickers) => new Set([...prevTickers, newTicker]));
+        setTickers((prevTickers) => new Set(prevTickers.add(newTicker)));
       }
     }
   }, [searchParams, ticker]);
