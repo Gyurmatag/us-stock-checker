@@ -67,7 +67,7 @@ const StockDetails: React.FC<StockDetailsProps> = async ({ ticker }) => {
         </div>
       </div>
       <div className='flex flex-col space-y-1.5'>
-        <h3 className='text-lg dark:text-gray-100'>Similar Companies</h3>
+        <h3 className='text-lg dark:text-gray-100'>Similar Companiessssssss</h3>
         <div className='flex space-x-3'>
           {displayedPeers?.map((peerTicker: string) => (
             <Link
