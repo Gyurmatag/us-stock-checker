@@ -16,6 +16,7 @@
     "@hookform/resolvers": "^3.3.4",
     "@radix-ui/react-label": "^2.0.2",
     "@radix-ui/react-slot": "^1.0.2",
+    "@sentry/nextjs": "^8.37.1",
     "@tremor/react": "^3.13.4",
     "awesome-debounce-promise": "^2.1.0",
     "class-variance-authority": "^0.7.0",
@@ -51,7 +52,7 @@
     "prettier": "^3.2.5",
     "prettier-plugin-tailwindcss": "^0.5.11",
     "tailwindcss": "^3.3.0",
-    "typescript": "^5",
-    "ts-node": "^10.9.2"
+    "ts-node": "^10.9.2",
+    "typescript": "^5"
   }
 }

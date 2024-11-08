@@ -8,6 +8,20 @@ type StockDetailsProps = {
   ticker: string;
 };
 
+// Helper function to get currency symbol
+const getCurrencySymbol = (currency: string) => {
+  switch (currency) {
+    case 'USD':
+      return '$';
+    case 'EUR':
+      return '€';
+    case 'GBP':
+      return '£';
+    default:
+      return currency;
+  }
+};
+
 const StockDetails: React.FC<StockDetailsProps> = async ({ ticker }) => {
   const companyProfileDataResponse = await fetch(
     `${FINNHUB_API}/api/v1/stock/profile2?symbol=${ticker}&token=${process.env.FINNHUB_API_KEY}`
@@ -26,9 +40,14 @@ const StockDetails: React.FC<StockDetailsProps> = async ({ ticker }) => {
   const companyPeersData =
     (await companyPeersDataResponse.json()) as CompanyPeers;
 
+  console.log('stockPriceData', companyProfileData);
+
   const displayedPeers = companyPeersData
     .filter((peerTicker) => peerTicker !== ticker)
     .slice(0, 3);
+
+  // Get currency symbol based on the fetched currency
+  const currencySymbol = getCurrencySymbol(companyProfileData.currency);
 
   return (
     <div className='dark:bg-dark-tremor-background dark:text-gray-300'>
@@ -39,9 +58,15 @@ const StockDetails: React.FC<StockDetailsProps> = async ({ ticker }) => {
             {companyProfileData.name}
           </h2>
           <div className='flex items-center space-x-2'>
-            <p className='text-3xl dark:text-gray-200'>{stockPriceData.c}</p>
+            <p className='text-3xl dark:text-gray-200'>
+              {stockPriceData.c} {currencySymbol}
+            </p>
             <span
-              className={`flex items-center rounded-lg px-3 py-1.5 text-xs font-semibold ${stockPriceData.d < 0 ? 'bg-red-200 text-red-700 dark:bg-red-700 dark:text-red-200' : 'bg-green-200 text-green-700 dark:bg-green-700 dark:text-green-200'}`}
+              className={`flex items-center rounded-lg px-3 py-1.5 text-xs font-semibold ${
+                stockPriceData.d < 0
+                  ? 'bg-red-200 text-red-700 dark:bg-red-700 dark:text-red-200'
+                  : 'bg-green-200 text-green-700 dark:bg-green-700 dark:text-green-200'
+              }`}
             >
               ({stockPriceData.dp.toFixed(2)}%)
             </span>
@@ -50,19 +75,27 @@ const StockDetails: React.FC<StockDetailsProps> = async ({ ticker }) => {
         <div className='flex flex-col justify-end'>
           <p className='flex justify-between space-x-6 text-sm dark:text-gray-200'>
             <span className='font-semibold'>Previous Close:</span>
-            <span>{stockPriceData.pc}</span>
+            <span>
+              {stockPriceData.pc} {currencySymbol}
+            </span>
           </p>
           <p className='flex justify-between text-sm dark:text-gray-200'>
             <span className='font-semibold'>Today&apos;s Open:</span>
-            <span>{stockPriceData.o}</span>
+            <span>
+              {stockPriceData.o} {currencySymbol}
+            </span>
           </p>
           <p className='flex justify-between text-sm dark:text-gray-200'>
             <span className='font-semibold'>Today&apos;s High:</span>
-            <span>{stockPriceData.h}</span>
+            <span>
+              {stockPriceData.h} {currencySymbol}
+            </span>
           </p>
           <p className='flex justify-between text-sm dark:text-gray-200'>
             <span className='font-semibold'>Today&apos;s Low:</span>
-            <span>{stockPriceData.l}</span>
+            <span>
+              {stockPriceData.l} {currencySymbol}
+            </span>
           </p>
         </div>
       </div>
